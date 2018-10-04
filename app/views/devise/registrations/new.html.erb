@@ -1,1 +1,6 @@
+<% if flash[:alert] %>
+  <div class="notice error-notice" id="notice">
+  <%= flash[:alert] %>
+  </div>
+<% end %>
 <%= render "registration_form" %>
