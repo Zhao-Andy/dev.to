@@ -65,31 +65,9 @@ class User < ApplicationRecord
   validates :text_color_hex, format: /\A#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})\z/, allow_blank: true
   validates :bg_color_hex, format: /\A#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})\z/, allow_blank: true
   validates :website_url, :employer_url, :mastodon_url, url: { allow_blank: true, no_local: true, schemes: ["https", "http"] }
-  # rubocop:disable Metrics/LineLength
-  validates :facebook_url,
-              format: /\Ahttps:\/\/(www.facebook.com|facebook.com)\/[a-zA-Z0-9.]{5,50}\/?\Z/,
-              allow_blank: true
-  validates :stackoverflow_url,
-              allow_blank: true,
-              format:
-              /\Ahttps:\/\/(www.stackoverflow.com|stackoverflow.com|www.stackexchange.com|stackexchange.com)\/([\S]{3,100})\Z/
-  validates :behance_url,
-              allow_blank: true,
-              format: /\Ahttps:\/\/(www.behance.net|behance.net)\/([a-zA-Z0-9\-\_]{3,20})\/?\Z/
-  validates :linkedin_url,
-              allow_blank: true,
-              format:
-                /\Ahttps:\/\/(www.linkedin.com|linkedin.com|[A-Za-z]{2}.linkedin.com)\/in\/([a-zA-Z0-9\-]{3,100})\/?\Z/
-  validates :dribbble_url,
-              allow_blank: true,
-              format: /\Ahttps:\/\/(www.dribbble.com|dribbble.com)\/([a-zA-Z0-9\-\_]{2,20})\/?\Z/
-  validates :medium_url,
-              allow_blank: true,
-              format: /\Ahttps:\/\/(www.medium.com|medium.com)\/([a-zA-Z0-9\-\_\@\.]{2,32})\/?\Z/
-  validates :gitlab_url,
-              allow_blank: true,
-              format: /\Ahttps:\/\/(www.gitlab.com|gitlab.com)\/([a-zA-Z0-9_\-\.]{1,100})\/?\Z/
-  # rubocop:enable Metrics/LineLength
+  validates :facebook_url, :stackoverflow_url, :behance_url, :dribbble_url, :medium_url, :gitlab_url, :linkedin_url,
+    allow_blank: true,
+    url: { no_local: true, schemes: ["https", "http"] }, profile_url: true, format: /\Ahttp(s)?:\/\/.*\Z/
   validates :shirt_gender,
               inclusion: { in: %w(unisex womens),
                            message: "%{value} is not a valid shirt style" },
