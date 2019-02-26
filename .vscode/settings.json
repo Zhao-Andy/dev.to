@@ -1,6 +1,8 @@
 {
-    "ruby.lint": {
-        "rubocop": true,
-        "fasterer": false,
-    }
+  "ruby.lint": {
+    "rubocop": true,
+    "fasterer": false
+  },
+  "ruby.useLanguageServer": true,
+  "ruby.intellisense": false
 }
