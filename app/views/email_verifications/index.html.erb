@@ -1,0 +1,24 @@
+<% if flash[:submit_success] %>
+  <div class="global-notice">
+    <%= flash[:submit_success] %>
+  </div>
+<% end %>
+<div style='margin:50px'>
+  <h1>Have an account issue? Use this form to verify you are the account owner.</h1>
+  <%= form_with(path: :user_email_verification_path) do |form| %>
+    <label for="email">Email - this is case sensitive. Please enter the exact email from your Twitter/GitHub account associated with the DEV account.</label>
+    <ul>
+      <li>Check your Twitter email via your settings: <a href="https://twitter.com/settings/email" target="_blank" rel="noopener noreferrer">Twitter</a></li>
+      <li>or GitHub via settings: <a href="https://github.com/settings/emails" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+    </ul>
+    <%= form.text_field :email, placeholder: "email" %>
+    <br>
+      <label for="auth_username">Other Account's Twitter/GitHub Username</label>
+      <%= form.text_field :username, placeholder: "social username" %>
+    <br>
+    <label for="auth_type">Twitter or GitHub?</label>
+    <%= form.select :auth_type, { "Twitter" => "twitter", "GitHub" => "github" } %>
+    <br>
+    <%= form.submit "Submit" %>
+  <% end %>
+</div>
