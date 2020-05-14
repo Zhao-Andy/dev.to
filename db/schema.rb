@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_11_224704) do
+ActiveRecord::Schema.define(version: 2020_05_14_212601) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -94,7 +94,9 @@ ActiveRecord::Schema.define(version: 2020_05_11_224704) do
     t.string "path"
     t.integer "positive_reactions_count", default: 0, null: false
     t.integer "previous_positive_reactions_count", default: 0
+    t.integer "previous_public_reactions_count", default: 0, null: false
     t.text "processed_html"
+    t.integer "public_reactions_count", default: 0, null: false
     t.boolean "published", default: false
     t.datetime "published_at"
     t.boolean "published_from_feed", default: false
@@ -378,6 +380,7 @@ ActiveRecord::Schema.define(version: 2020_05_11_224704) do
     t.integer "markdown_character_count"
     t.integer "positive_reactions_count", default: 0, null: false
     t.text "processed_html"
+    t.integer "public_reactions_count", default: 0, null: false
     t.integer "reactions_count", default: 0, null: false
     t.boolean "receive_notifications", default: true
     t.integer "score", default: 0
