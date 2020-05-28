@@ -1,6 +1,6 @@
 import { request } from '@utilities/http';
 
-function addCloseListener() {
+export function addCloseListener() {
   const button = document.querySelector('.close-actions-panel');
   button.addEventListener('click', () => {
     // getting the article show page document because this is called within an iframe
@@ -16,7 +16,7 @@ function addCloseListener() {
   });
 }
 
-function initializeHeight() {
+export function initializeHeight() {
   document.documentElement.style.height = '100%';
   document.body.style.cssText = 'height: 100%; margin: 0; padding-top: 0;';
   document.getElementById('page-content').style.cssText =
@@ -46,7 +46,7 @@ function applyReactedClass(category) {
   }
 }
 
-function addReactionButtonListeners() {
+export function addReactionButtonListeners() {
   const butts = Array.from(
     document.querySelectorAll('.reaction-button, .reaction-vomit-button'),
   );
@@ -97,7 +97,7 @@ function addReactionButtonListeners() {
         /* eslint-enable no-restricted-globals */
       } catch (error) {
         // eslint-disable-next-line no-alert
-        alert(error);
+        console.log(error)
       }
     });
   });
@@ -193,7 +193,6 @@ async function adjustTag(el) {
     });
 
     const outcome = await response.json();
-
     if (outcome.status === 'Success') {
       let adjustedTagName;
       if (el.tagName === 'BUTTON') {
@@ -232,7 +231,9 @@ async function adjustTag(el) {
         addCloseButton: true,
       });
     }
+    console.log(document.body.innerHTML)
   } catch (error) {
+    console.log(error)
     // eslint-disable-next-line no-alert
     alert(error);
   }
@@ -301,7 +302,7 @@ function handleAdminInput() {
   }
 }
 
-function addAdjustTagListeners() {
+export function addAdjustTagListeners() {
   Array.from(document.getElementsByClassName('adjustable-tag')).forEach(
     (btn) => {
       btn.addEventListener('click', () => {
@@ -328,7 +329,7 @@ function addAdjustTagListeners() {
   }
 }
 
-function addBottomActionsListeners() {
+export function addBottomActionsListeners() {
   addAdjustTagListeners();
   Array.from(document.getElementsByClassName('other-things-btn')).forEach(
     (btn) => {
