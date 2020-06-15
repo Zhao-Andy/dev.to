@@ -1,5 +1,5 @@
 class ModerationsController < ApplicationController
-  after_action :verify_authorized
+  after_action :verify_authorized, except: [:mod_center_article]
 
   JSON_OPTIONS = {
     only: %i[title published_at cached_tag_list path],
@@ -20,6 +20,51 @@ class ModerationsController < ApplicationController
     @articles = articles.includes(:user).to_json(JSON_OPTIONS)
     @tag = Tag.find_by(name: params[:tag]) || not_found if params[:tag].present?
     @current_user_tags = current_user.moderator_for_tags
+  end
+
+  def mod_center_article
+    @article = Article.find_by(path: "/#{params[:username].downcase}/#{params[:slug]}").decorate
+    # TODO: handle 404
+    # TODO: add authorization
+    @user = @article.user
+    @organization = @article.organization
+
+    if @article.collection
+      @collection = @article.collection
+
+      # we need to make sure that articles that were cross posted after their
+      # original publication date appear in the correct order in the collection,
+      # considering non cross posted articles with a more recent publication date
+      @collection_articles = @article.collection.articles.
+        published.
+        order(Arel.sql("COALESCE(crossposted_at, published_at) ASC"))
+    end
+
+    @comments_to_show_count = @article.cached_tag_list_array.include?("discuss") ? 50 : 30
+
+    @second_user = User.find(@article.second_user_id) if @article.second_user_id.present?
+    @third_user = User.find(@article.third_user_id) if @article.third_user_id.present?
+
+    @user_json_ld = {
+      "@context": "http://schema.org",
+      "@type": "Person",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": URL.user(@user)
+      },
+      "url": URL.user(@user),
+      "sameAs": user_same_as,
+      "image": ProfileImage.new(@user).get(width: 320),
+      "name": @user.name,
+      "email": @user.email_public ? @user.email : nil,
+      "jobTitle": @user.employment_title.presence,
+      "description": @user.summary.presence || "404 bio not found",
+      "disambiguatingDescription": user_disambiguating_description,
+      "worksFor": [user_works_for].compact,
+      "alumniOf": @user.education.presence
+    }.reject { |_, v| v.blank? }
+
+    @mod_panel_open_on_load = true
   end
 
   def article
@@ -57,5 +102,42 @@ class ModerationsController < ApplicationController
     @already_adjusted_tags = @adjustments.map(&:tag_name).join(", ")
     @allowed_to_adjust = @moderatable.class.name == "Article" && (current_user.has_role?(:super_admin) || @tag_moderator_tags.any?)
     @hidden_comments = @moderatable.comments.where(hidden_by_commentable_user: true)
+  end
+
+  def user_works_for
+    # For further examples of the worksFor and disambiguatingDescription properties,
+    # please refer to this link: https://jsonld.com/person/
+    return unless @user.employer_name.presence || @user.employer_url.presence
+
+    {
+      "@type": "Organization",
+      "name": @user.employer_name,
+      "url": @user.employer_url
+    }.reject { |_, v| v.blank? }
+  end
+
+  def user_disambiguating_description
+    [@user.mostly_work_with, @user.currently_hacking_on, @user.currently_learning].compact
+  end
+
+  def user_same_as
+    # For further information on the sameAs property, please refer to this link:
+    # https://schema.org/sameAs
+    [
+      @user.twitter_username.presence ? "https://twitter.com/#{@user.twitter_username}" : nil,
+      @user.github_username.presence ? "https://github.com/#{@user.github_username}" : nil,
+      @user.mastodon_url,
+      @user.facebook_url,
+      @user.youtube_url,
+      @user.linkedin_url,
+      @user.behance_url,
+      @user.stackoverflow_url,
+      @user.dribbble_url,
+      @user.medium_url,
+      @user.gitlab_url,
+      @user.instagram_url,
+      @user.twitch_username,
+      @user.website_url,
+    ].reject(&:blank?)
   end
 end

@@ -1,3 +1,31 @@
+<style>
+  body {
+    padding-top: 0;
+  }
+
+  body > footer,
+  #top-bar--search {
+    display: none;
+  }
+
+  #top-bar {
+    height: var(--header-height);
+  }
+
+  .top-bar__container {
+    height: var(--header-height);
+  }
+
+  body > footer,
+  .top-bar__links {
+    display: none;
+  }
+
+  .universal-page-content-wrapper {
+    overflow: unset;
+  }
+</style>
+
 <% title @article.title_with_query_preamble(user_signed_in?) %>
 
 <%= render "shared/payment_pointer", user: @article.user %>
@@ -196,27 +224,8 @@
       <% end %>
     <% end %>
     <%= render "articles/org_branding", organization: @organization %>
-    <%= render "articles/full_comment_area" %>
   </div>
-  <% cache("article-bottom-content-#{@article.id}", expires_in: 18.hours) do %>
-    <% @classic_article = Suggester::Articles::Classic.new(@article, not_ids: [@article.id]).get.first %>
-    <% if @classic_article %>
-      <%= render "additional_content_boxes/article_box",
-                 article: @classic_article,
-                 classification: "classic",
-                 classification_text: "Classic #{community_name} Post from #{@classic_article.readable_publish_date}",
-                 follow_cue: "Follow <a href='#{@classic_article.user.path}'>@#{@classic_article.user.username}</a> to see more of their posts in your feed." %>
-    <% end %>
-    <div id="additional-content-area" data-article-id="<%= @article.id %>,<%= @classic_article&.id %>"></div>
-    <% suggested_articles = ArticleSuggester.new(@article).articles(max: 4) %>
-    <%= render "articles/bottom_content", articles: suggested_articles %>
-  <% end %>
 </div>
-
-<% stick_nav_cache_key = "sticky-sidebar-#{@article.id}-#{(@organization || @user).profile_updated_at}-#{(@organization || @user).last_article_at}-0-#{@user.pro?}" %>
-<% cache(stick_nav_cache_key, expires_in: 50.hours) do %>
-  <%= render "articles/sticky_nav" %>
-<% end %>
 
 <% cache("specific-article-extra-scripts-#{@article.id}-#{@article.updated_at}", expires_in: 24.hours) do %>
   <% if has_vid?(@article) %>
@@ -233,6 +242,13 @@
 <div class="mod-actions-menu" data-open-on-load="<%= @mod_panel_open_on_load.present? %>"></div>
 <div id="mod-actions-menu-btn-area"></div>
 <div class="flag-user-modal-container hidden"></div>
+<a href="/mod<%= "?tag=#{@previous_tag}" if @previous_tag.present? %>" class="close-article-view" id="close-article-view">
+  <%= inline_svg_tag("x.svg", aria: true, title: "Go back to mod center") %>
+</a>
+
+<script>
+  document.getElementById('top-bar').appendChild(document.getElementById('close-article-view'))
+</script>
 
 <% cache("article-show-scripts", expires_in: 8.hours) do %>
   <script async>

@@ -1,13 +1,7 @@
 import PropTypes from 'prop-types';
 import { h } from 'preact';
 
-const SingleArticle = ({
-  title,
-  // path,
-  cachedTagList,
-  publishedAt,
-  user,
-}) => {
+const SingleArticle = ({ title, path, cachedTagList, publishedAt, user }) => {
   const tags = cachedTagList.split(', ').map((tag) => {
     return (
       <span className="mod-article-tag">
@@ -54,7 +48,7 @@ const SingleArticle = ({
   };
 
   return (
-    <div className="moderation-single-article">
+    <a className="moderation-single-article" href={`/mod/article${path}`}>
       <span className="article-title">
         <header>
           <h3>{title}</h3>
@@ -63,13 +57,13 @@ const SingleArticle = ({
       </span>
       <span className="article-author">{user.name}</span>
       <span className="article-published-at">{formatDate(publishedAt)}</span>
-    </div>
+    </a>
   );
 };
 
 SingleArticle.propTypes = {
   title: PropTypes.string.isRequired,
-  // path: PropTypes.string.isRequired,
+  path: PropTypes.string.isRequired,
   publishedAt: PropTypes.string.isRequired,
   cachedTagList: PropTypes.isRequired,
   user: PropTypes.isRequired,

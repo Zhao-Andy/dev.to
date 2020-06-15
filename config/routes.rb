@@ -364,6 +364,7 @@ Rails.application.routes.draw do
   get "/shop", to: redirect("https://shop.dev.to")
 
   get "/mod" => "moderations#index", :as => :mod
+  get "/mod/article/:username/:slug" => "moderations#mod_center_article"
   get "/mod/:tag" => "moderations#index"
   get "/page/crayons" => "pages#crayons"
 

@@ -11,11 +11,11 @@ const initializeModerationsTools = async () => {
   );
   const { default: initializeFlagUserModal } = await import('./flagUserModal');
 
-  // article show page
   if (
     user.trusted &&
     user.id !== articleAuthorId &&
     !top.document.location.pathname.endsWith('/mod')
+    // article show page
   ) {
     initializeActionsPanel(user, path);
     initializeFlagUserModal(articleAuthorId);

@@ -22,7 +22,8 @@ export default function initializeActionsPanel(user, path) {
     document.querySelector('.mod-actions-menu-btn').classList.toggle('hidden');
   }
 
-  document.querySelector('.mod-actions-menu').innerHTML = modActionsMenuHTML;
+  const modActionsMenu = document.querySelector('.mod-actions-menu');
+  modActionsMenu.innerHTML = modActionsMenuHTML;
   // eslint-disable-next-line no-restricted-globals
   if (!top.document.location.pathname.endsWith('/mod')) {
     document.getElementById(
@@ -31,5 +32,8 @@ export default function initializeActionsPanel(user, path) {
     document
       .querySelector('.mod-actions-menu-btn')
       .addEventListener('click', toggleModActionsMenu);
+  }
+  if (modActionsMenu.dataset.openOnLoad === 'true') {
+    toggleModActionsMenu();
   }
 }
