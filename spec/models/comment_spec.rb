@@ -54,6 +54,25 @@ RSpec.describe Comment, type: :model do
       end
     end
 
+    describe "after_destroy" do
+      it "unflags the commentable if a hidden comment was deleted" do
+        comment = create(:comment)
+        comment.update(hidden_by_commentable_user: true)
+        comment.commentable.update(any_comments_hidden: true)
+        comment.destroy
+        expect(comment.commentable.any_comments_hidden).to eq false
+      end
+
+      it "does not unflag the commentable if there are still hidden comments on it" do
+        comment = create(:comment)
+        create(:comment, commentable: comment.commentable, hidden_by_commentable_user: true)
+        comment.update(hidden_by_commentable_user: true)
+        comment.commentable.update(any_comments_hidden: true)
+        comment.destroy
+        expect(comment.commentable.any_comments_hidden).to eq true
+      end
+    end
+
     describe "#search_id" do
       it "returns comment_ID" do
         expect(comment.search_id).to eq("comment_#{comment.id}")

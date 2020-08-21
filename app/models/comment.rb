@@ -210,6 +210,8 @@ class Comment < ApplicationRecord
   def after_destroy_actions
     Users::BustCacheWorker.perform_async(user_id)
     user.touch(:last_comment_at)
+    commentable.update(any_comments_hidden: false) unless Comment.exists?(commentable: commentable,
+                                                                          hidden_by_commentable_user: true)
   end
 
   def before_destroy_actions
